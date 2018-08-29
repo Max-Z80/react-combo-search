@@ -228,7 +228,6 @@ export default class ComboSearch extends React.Component {
         return (
             <form onSubmit={this.handleSubmit} ref={el => (this.form = el)} data-automation="regionComboSearchForm">
                 <div className={this.props.classNames.wrapper}>
-                    <p>Filter by:</p>
                     <div className="ComboStyleOverride">
                         {this.props.selectRenderFn
                             ? this.props.selectRenderFn(
