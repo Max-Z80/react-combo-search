@@ -10,6 +10,10 @@ import RadioGroup from './RadioGroup';
 import SmartButton from './SmartButton';
 import FilterBar from './FilterBar';
 
+/* added by Max to support formdata.entries on iceweasel */
+require('formdata-polyfill')
+
+
 export default class ComboSearch extends React.Component {
     constructor(props) {
         super(props);
