@@ -230,7 +230,7 @@ describe('onSearch arguments', () => {
         // I can not simulate a user seleting stuff in the ComboSelect 
         //search.find('.ComboSearch__inputWrapper').find('ComboSelect').find('ComboSelectItem').at(2).simulate('click', { target: { value: 'info' } });
         // this is a bad workaround
-        search.instance().changeSecondLevelCriteria('error', 'error');
+        search.instance().changeRightSelectText('error', 'error');
         search.simulate('submit', { preventDefault() { } });
         expect(cb.calledWith([{ criteria: 'category', search: 'error', selectText: 'Category' }])).to.be.true;
 
