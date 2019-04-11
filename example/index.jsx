@@ -16,7 +16,7 @@ function render(Component) {
                         { value: 'category', text: 'Category' },
                         { value: 'tag', text: 'Tag' },
                     ]}
-                    secondLevelSelectData={{
+                    selectPickerData={{
                         'category': ['error', 'debug', 'info', 'comment', 'command lines'],
                         'tag': ['tag1', 'tag2']
                     }}

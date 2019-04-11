@@ -71,7 +71,7 @@ export default class ComboSearch extends React.Component {
     static propTypes = {
         onSearch: PropTypes.func.isRequired,
         selectData: PropTypes.array,
-        secondLevelSelectData: PropTypes.object,
+        selectPickerData: PropTypes.object,
         selectRenderFn: PropTypes.func,
         selectRenderFnArgs: PropTypes.array,
         datePickerRenderFn: PropTypes.func,
@@ -249,17 +249,17 @@ export default class ComboSearch extends React.Component {
             : this.props.datePickerCriteria === this.state.criteria;
 
 
-        // check whether second level select is needed
-        let isSecondLevelSelectNeeded = false;
-        let secondLevelSelectOptions = null;
+        // check whether a select pciker is needed
+        let isSelectPickerNeeded = false;
+        let selectPickerOptions = null;
 
-        if (this.props.secondLevelSelectData) {
-            for (let property in this.props.secondLevelSelectData) {
+        if (this.props.selectPickerData) {
+            for (let property in this.props.selectPickerData) {
                 if (property === this.state.criteria) {
-                    if (Array.isArray(this.props.secondLevelSelectData[property]))
-                        isSecondLevelSelectNeeded = true;
-                    secondLevelSelectOptions = this.props.secondLevelSelectData[property];
-                    // break;
+                    if (Array.isArray(this.props.selectPickerData[property]))
+                        isSelectPickerNeeded = true;
+                    selectPickerOptions = this.props.selectPickerData[property];
+                    break;
                 }
             }
         }
@@ -342,18 +342,18 @@ export default class ComboSearch extends React.Component {
                                     )}
                             </div>
                         </div>
-                    ) : (isSecondLevelSelectNeeded
+                    ) : (isSelectPickerNeeded
                         ? (
                             <div className="ComboSearch__inputWrapper">
                                 <div className="ComboStyleOverride">
                                     <ComboSelect
-                                        data={secondLevelSelectOptions} //no update based on change of this prop. this is a bug reported https://github.com/gogoair/react-combo-select/issues/47
+                                        data={selectPickerOptions} //no update based on change of this prop. this is a bug reported https://github.com/gogoair/react-combo-select/issues/47
                                         onChange={this.changeRightSelectText}
                                         value={this.state.rightSelectText}
                                         name="search"
                                         order="off"
                                         sort="off"
-                                        disabled={this.props.secondLevelSelectData.length === 0}
+                                        disabled={this.props.selectPickerData.length === 0}
                                         {...this.props.additionalSelectProps}
                                     />
                                 </div>

@@ -95,7 +95,7 @@ describe('Select filtering', () => {
         const search = mount(<ComboSearch
             onSearch={cb}
             selectData={selectData}
-            secondLevelSelectData={{
+            selectPickerData={{
                 'category': ['error', 'debug', 'info', 'comment', 'command lines']
             }} />);
 
@@ -222,7 +222,7 @@ describe('onSearch arguments', () => {
         const search = mount(<ComboSearch
             onSearch={cb}
             selectData={selectData}
-            secondLevelSelectData={{
+            selectPickerData={{
                 'category': ['error', 'debug', 'info', 'comment', 'command lines']
             }} />);
 

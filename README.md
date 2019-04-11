@@ -85,7 +85,7 @@ If you decide on using existing components, you may want to style them different
 | ------------ | ------- | ------- | ----------- |
 | **onSearch** | function | none | Callback to invoke on filter apply, gets passed form data as only argument
 | **selectData** | array of objects | none | Data for **react-combo-select** to populate select with options, with value and text props
-| **secondLevelSelectData** | object | none | One or more of the options from **selectData** prop on which we want to open a select picker. See this [section](#selectpicker) |
+| **selectPickerData** | object | none | One or more of the options from **selectData** prop on which we want to open a select picker. See this [section](#select-picker) |
 | **datePickerCriteria** | string or array | none | One or more of the options from **selectData** prop on which we want to open a date picker, either a string or an array of strings (value prop)
 | **selectRenderFn** | function | none | Function that returns jsx for your custom select component. Since select is a controlled component this function will get called like **selectRenderFn(selectData, selectedText, selectedValue, changeCallback, ...yourArguments)**, where returning component sets its options to selectData, text to selectedText(optional), value to selectedValue and onChange to changeCallback. 
 | **selectRenderFnArgs** | array | none | Array of arguments that will get passed to **selectRenderFn** that you passed. Eg [1, 2, 3] will get spread as arguments
@@ -111,7 +111,7 @@ You can also freely fork and play around with the project.
 ### Select Picker
 This fork brings the possibility to search for keywords using a select picker. This feature comes in addition to the existing search filters by text or by date. It helps the user searching for predefined terms which he otherwise may not know or misspell.
 In order to use this functionnality
-- set a props called secondLevelSelectData props
+- set a props called selectPickerData props
 - add your criteria to selectData as you would do for a search filter by date.
 
 An example
@@ -122,9 +122,9 @@ An example
     ... your search criteria by text or by date ...
     { value: 'category', text: 'Category' },
   ]}
-  secondLevelSelectData={{
+  selectPickerData={{
     'category': ['error', 'debug', 'info', 'comment', 'command lines']
   }}
 />                  
 ```
-The secondLevelSelectData object contains one or several properties which corresponds to the name of the criteria which will offer different options. The value of this property is an array containing the differnet options. 
+The selectPickerData object contains one or several properties which corresponds to the name of the criteria which will offer different options. The value of this property is an array containing the different options. 
