@@ -4,29 +4,35 @@ import { AppContainer as HotContainer } from 'react-hot-loader';
 import ComboSearch from '../Components/ComboSearch.jsx';
 
 function render(Component) {
-	ReactDOM.render(
-		<HotContainer>
-			<div style={{ "padding": "30px" }}>
-				<Component
+    ReactDOM.render(
+        <HotContainer>
+            <div style={{ "padding": "30px" }}>
+                <Component
                     onSearch={(data) => { console.log(data) }}
                     selectData={[
                         { value: 'role_name', text: 'Role' },
                         { value: 'partner_code', text: 'Partner' },
                         { value: 'created_date', text: 'Created date' },
+                        { value: 'category', text: 'Category' },
+                        { value: 'tag', text: 'Tag' },
                     ]}
+                    secondLevelSelectData={{
+                        'category': ['error', 'debug', 'info', 'comment', 'command lines'],
+                        'tag': ['tag1', 'tag2']
+                    }}
                     datePickerCriteria='created_date'
                     isInFetchingState={false}
                 />
-			</div>
-		</HotContainer>,
-		document.getElementById('react')
-	);
+            </div>
+        </HotContainer>,
+        document.getElementById('react')
+    );
 }
 
 render(ComboSearch);
 
 if (module.hot) {
-	module.hot.accept('../Components/ComboSearch', () => {
-		render(ComboSearch);
-	});
+    module.hot.accept('../Components/ComboSearch', () => {
+        render(ComboSearch);
+    });
 }

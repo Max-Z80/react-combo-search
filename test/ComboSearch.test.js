@@ -3,18 +3,19 @@ import ComboSearch from '../Components/ComboSearch.jsx';
 
 import { mount, shallow } from 'enzyme';
 import sinon from 'sinon';
-import {expect} from 'chai';
+import { expect } from 'chai';
 import moment from 'moment';
 
-const onSearchMock = () => {};
+const onSearchMock = () => { };
 const selectData = [
     { value: 'role_name', text: 'Role' },
     { value: 'partner_code', text: 'Partner' },
     { value: 'team_name', text: 'Team' },
     { value: 'created_date', text: 'Date' },
+    { value: 'category', text: 'Category' },
 ];
 
-ComboSearch.prototype.componentDidMount = () => {};
+ComboSearch.prototype.componentDidMount = () => { };
 
 describe('Initialization of component', () => {
 
@@ -79,12 +80,29 @@ describe('Select filtering', () => {
 
     it('switches to date picker when option is selected', () => {
         const cb = sinon.spy();
-        const search = mount(<ComboSearch onSearch={cb} selectData={selectData} datePickerCriteria="team_name" />);
+        const search = mount(<ComboSearch onSearch={cb} selectData={selectData} datePickerCriteria="created_date" />);
 
-        search.setState({ criteria: 'team_name' });
+        search.setState({ criteria: 'created_date' });
 
         expect(search.find('.Datepicker__input').length).to.equal(1);
         expect(search.find('.ComboSearch__input').length).to.equal(0);
+
+        search.unmount();
+    });
+
+    it('switches to second level select when option is selected', () => {
+        const cb = sinon.spy();
+        const search = mount(<ComboSearch
+            onSearch={cb}
+            selectData={selectData}
+            secondLevelSelectData={{
+                'category': ['error', 'debug', 'info', 'comment', 'command lines']
+            }} />);
+
+        search.setState({ criteria: 'category' });
+
+        expect(search.find('.Datepicker__input').length).to.equal(0);
+        expect(search.find('.ComboSearch__inputWrapper').find('ComboSelect').length).to.equal(1);
 
         search.unmount();
     });
@@ -92,11 +110,11 @@ describe('Select filtering', () => {
 
 describe('Form submit', () => {
 
-    beforeEach(()=>{
+    beforeEach(() => {
         sinon.spy(ComboSearch.prototype, 'handleSubmit');
     });
 
-    afterEach(()=>{
+    afterEach(() => {
         ComboSearch.prototype.handleSubmit.restore();
     });
 
@@ -104,7 +122,7 @@ describe('Form submit', () => {
         const cb = sinon.spy();
         const search = mount(<ComboSearch onSearch={cb} selectData={selectData} />);
 
-        search.simulate('submit', { preventDefault() {} });
+        search.simulate('submit', { preventDefault() { } });
 
         expect(ComboSearch.prototype.handleSubmit.calledOnce).to.be.true;
         expect(cb.notCalled).to.be.true;
@@ -117,7 +135,7 @@ describe('Form submit', () => {
         const search = mount(<ComboSearch onSearch={cb} selectData={selectData} />);
 
         search.find('.ComboSearch__input').simulate('change', { target: { value: 'Hello' } });
-        search.simulate('submit', { preventDefault() {} });
+        search.simulate('submit', { preventDefault() { } });
 
         expect(ComboSearch.prototype.handleSubmit.calledOnce).to.be.true;
         expect(cb.calledOnce).to.be.true;
@@ -130,7 +148,7 @@ describe('Form submit', () => {
         const search = mount(<ComboSearch onSearch={cb} selectData={selectData} isInFetchingState={true} />);
 
         search.find('.ComboSearch__input').simulate('change', { target: { value: 'Hello' } });
-        search.simulate('submit', { preventDefault() {} });
+        search.simulate('submit', { preventDefault() { } });
 
         expect(ComboSearch.prototype.handleSubmit.calledOnce).to.be.true;
         expect(cb.notCalled).to.be.true;
@@ -143,7 +161,7 @@ describe('Form submit', () => {
         const search = mount(<ComboSearch onSearch={cb} selectData={selectData} />);
 
         search.setState({ appliedFilters: [{ criteria: 'role_name', search: 'Hello' }] });
-        search.simulate('submit', { preventDefault() {} });
+        search.simulate('submit', { preventDefault() { } });
 
         expect(ComboSearch.prototype.handleSubmit.calledOnce).to.be.true;
         expect(cb.notCalled).to.be.true;
@@ -156,7 +174,7 @@ describe('Form submit', () => {
         const search = mount(<ComboSearch onSearch={cb} selectData={selectData} />);
 
         search.find('.ComboSearch__input').simulate('change', { target: { value: 'Hello' } });
-        search.simulate('submit', { preventDefault() {} });
+        search.simulate('submit', { preventDefault() { } });
 
         expect(search.find('.ComboSearch__input').props().value.length).to.equal(0);
         expect(search.state().inputText.length).to.equal(0);
@@ -173,7 +191,7 @@ describe('onSearch arguments', () => {
         const search = mount(<ComboSearch onSearch={cb} selectData={selectData} />);
 
         search.find('.ComboSearch__input').simulate('change', { target: { value: 'Hello' } });
-        search.simulate('submit', { preventDefault() {} });
+        search.simulate('submit', { preventDefault() { } });
 
         expect(cb.calledWith([{ criteria: 'role_name', search: 'Hello', selectText: 'Role' }])).to.be.true;
 
@@ -186,7 +204,7 @@ describe('onSearch arguments', () => {
 
         search.setState({ criteria: 'created_date', selectText: 'Created date' });
         search.find('.Datepicker__input').simulate('change', { target: { value: moment(new Date(2017, 12, 12)) } });
-        search.simulate('submit', { preventDefault() {} });
+        search.simulate('submit', { preventDefault() { } });
 
         expect(cb.calledWith([{
             criteria: 'created_date',
@@ -199,13 +217,32 @@ describe('onSearch arguments', () => {
         search.unmount();
     });
 
+    it('calls onSearch with proper args when filtering by select', () => {
+        const cb = sinon.spy();
+        const search = mount(<ComboSearch
+            onSearch={cb}
+            selectData={selectData}
+            secondLevelSelectData={{
+                'category': ['error', 'debug', 'info', 'comment', 'command lines']
+            }} />);
+
+        search.setState({ criteria: 'category', selectText: 'Category' });
+        // I can not simulate a user seleting stuff in the ComboSelect 
+        //search.find('.ComboSearch__inputWrapper').find('ComboSelect').find('ComboSelectItem').at(2).simulate('click', { target: { value: 'info' } });
+        // this is a bad workaround
+        search.instance().changeRightSelectText('error', 'error');
+        search.simulate('submit', { preventDefault() { } });
+        expect(cb.calledWith([{ criteria: 'category', search: 'error', selectText: 'Category' }])).to.be.true;
+
+        search.unmount();
+    });
+
     it('calls onSearch with proper args with simpleVersion enabled', () => {
         const cb = sinon.spy();
         const search = mount(<ComboSearch onSearch={cb} selectData={selectData} simpleVersion />);
 
         search.find('.ComboSearch__input').simulate('change', { target: { value: 'Hello' } });
-        search.simulate('submit', { preventDefault() {} });
-
+        search.simulate('submit', { preventDefault() { } });
         expect(cb.calledWith({ criteria: 'role_name', search: 'Hello', selectText: 'Role' })).to.be.true;
 
         search.unmount();
@@ -220,7 +257,7 @@ describe('Validation of input', () => {
         const cb = sinon.spy();
         const search = mount(<ComboSearch onSearch={cb} selectData={selectData} />);
 
-        search.simulate('submit', { preventDefault() {} });
+        search.simulate('submit', { preventDefault() { } });
 
         expect(search.state().inputTextError).to.equal('This field is required and should be at least 3 characters long');
         expect(cb.notCalled).to.be.true;
@@ -230,15 +267,15 @@ describe('Validation of input', () => {
 
     it('applies custom validation', () => {
         const cb = sinon.spy();
-        const search = mount(<ComboSearch onSearch={cb} selectData={selectData} validationCallback={(value) => { return value && value.length > 10}} />);
+        const search = mount(<ComboSearch onSearch={cb} selectData={selectData} validationCallback={(value) => { return value && value.length > 10 }} />);
 
         search.find('.ComboSearch__input').simulate('change', { target: { value: 'Hello' } });
-        search.simulate('submit', { preventDefault() {} });
+        search.simulate('submit', { preventDefault() { } });
 
         expect(cb.notCalled).to.be.true;
 
         search.find('.ComboSearch__input').simulate('change', { target: { value: '1234567891011' } });
-        search.simulate('submit', { preventDefault() {} });
+        search.simulate('submit', { preventDefault() { } });
 
         expect(cb.notCalled).to.be.true;
 
@@ -249,7 +286,7 @@ describe('Validation of input', () => {
         const cb = sinon.spy();
         const search = mount(<ComboSearch onSearch={cb} selectData={selectData} />);
 
-        search.simulate('submit', { preventDefault() {} });
+        search.simulate('submit', { preventDefault() { } });
 
         expect(search.find('.ComboSearch__formError')).to.be.truthy;
 
@@ -261,7 +298,7 @@ describe('Validation of input', () => {
         const search = mount(<ComboSearch onSearch={cb} selectData={selectData} datePickerCriteria="created_date" />);
 
         search.setState({ criteria: 'created_date' });
-        search.simulate('submit', { preventDefault() {} });
+        search.simulate('submit', { preventDefault() { } });
 
         expect(search.find('.ComboSearch__formError')).to.be.truthy;
 
@@ -272,7 +309,7 @@ describe('Validation of input', () => {
         const cb = sinon.spy();
         const search = mount(<ComboSearch onSearch={cb} selectData={selectData} inputErrorMessage="Fill out the input dude!" />);
 
-        search.simulate('submit', { preventDefault() {} });
+        search.simulate('submit', { preventDefault() { } });
 
         expect(search.find('.ComboSearch__formError')).to.be.truthy;
         expect(search.state().inputTextError).to.equal('Fill out the input dude!');
@@ -291,8 +328,8 @@ describe('Validation of input', () => {
             ]
         });
 
-        search.find('.ComboSearch__input').simulate('change', { target: { value: 'partner admin' }});
-        search.simulate('submit', { preventDefault() {} });
+        search.find('.ComboSearch__input').simulate('change', { target: { value: 'partner admin' } });
+        search.simulate('submit', { preventDefault() { } });
 
         expect(search.find('.ComboSearch__formError')).to.be.truthy;
         expect(search.state().inputTextError).to.equal('Filter already exists!');
@@ -304,7 +341,7 @@ describe('Validation of input', () => {
         const cb = sinon.spy();
         const search = mount(<ComboSearch onSearch={cb} selectData={selectData} />);
 
-        search.simulate('submit', { preventDefault() {} });
+        search.simulate('submit', { preventDefault() { } });
 
         expect(search.find('.ComboSearch__formError')).to.be.truthy;
 
@@ -320,7 +357,7 @@ describe('Validation of input', () => {
         const search = mount(<ComboSearch onSearch={cb} selectData={selectData} datePickerCriteria="created_date" />);
 
         search.setState({ criteria: 'created_date' });
-        search.simulate('submit', { preventDefault() {} });
+        search.simulate('submit', { preventDefault() { } });
 
         expect(search.find('.ComboSearch__formError')).to.be.truthy;
 
@@ -341,7 +378,7 @@ describe('Validation of input', () => {
             date: moment(new Date(2017, 11, 21)).format('DD MMM YYYY'),
             momentDate: moment(new Date(2017, 11, 21))
         });
-        search.simulate('submit', { preventDefault() {} });
+        search.simulate('submit', { preventDefault() { } });
 
         search.setState({
             criteria: 'created_date',
@@ -349,7 +386,7 @@ describe('Validation of input', () => {
             date: moment(new Date(2017, 11, 12)).format('DD MMM YYYY'),
             momentDate: moment(new Date(2017, 11, 12))
         });
-        search.simulate('submit', { preventDefault() {} });
+        search.simulate('submit', { preventDefault() { } });
 
         expect(search.state().appliedFilters[0]).to.include({
             search: 'before',
@@ -366,8 +403,8 @@ describe('Filters rendering', () => {
         const cb = sinon.spy();
         const search = mount(<ComboSearch onSearch={cb} selectData={selectData} datePickerCriteria="team_name" />);
 
-        search.find('.ComboSearch__input').simulate('change', { target: { value: 'partner admin' }});
-        search.simulate('submit', { preventDefault() {} });
+        search.find('.ComboSearch__input').simulate('change', { target: { value: 'partner admin' } });
+        search.simulate('submit', { preventDefault() { } });
 
         expect(search.find('.FilterBar').length).to.equal(1);
         expect(search.find('.FilterBar__filter').length).to.equal(1);
@@ -379,10 +416,12 @@ describe('Filters rendering', () => {
         const cb = sinon.spy();
         const search = mount(<ComboSearch onSearch={cb} selectData={selectData} datePickerCriteria="team_name" />);
 
-        search.setState({ appliedFilters: [
-            { criteria: 'role_name', search: 'partner admin' },
-            { criteria: 'role_name', search: 'partner user' }
-        ] });
+        search.setState({
+            appliedFilters: [
+                { criteria: 'role_name', search: 'partner admin' },
+                { criteria: 'role_name', search: 'partner user' }
+            ]
+        });
 
         expect(search.find('.FilterBar').length).to.equal(1);
         expect(search.find('.FilterBar__filter').length).to.equal(2);
@@ -399,13 +438,15 @@ describe('Filters rendering', () => {
         const cb = sinon.spy();
         const search = mount(<ComboSearch onSearch={cb} selectData={selectData} datePickerCriteria="team_name" />);
 
-        search.setState({ appliedFilters: [
-            { criteria: 'role_name', search: 'partner admin', selectText: 'Role' },
-            { criteria: 'role_name', search: 'partner user', selectText: 'Role' }
-        ] });
+        search.setState({
+            appliedFilters: [
+                { criteria: 'role_name', search: 'partner admin', selectText: 'Role' },
+                { criteria: 'role_name', search: 'partner user', selectText: 'Role' }
+            ]
+        });
 
-        search.find('.ComboSearch__input').simulate('change', { target: { value: 'partner admin' }});
-        search.simulate('submit', { preventDefault() {} });
+        search.find('.ComboSearch__input').simulate('change', { target: { value: 'partner admin' } });
+        search.simulate('submit', { preventDefault() { } });
 
 
         expect(search.state().appliedFilters.length).to.equal(2);

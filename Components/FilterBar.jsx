@@ -13,7 +13,6 @@ const FilterBar = props => {
     const capitalize = (string) => {
         return string.charAt(0).toUpperCase() + string.slice(1);
     };
-
     return (
         <div className={props.classNames.wrapper}>
             {props.filters.map((filter, i) => {
