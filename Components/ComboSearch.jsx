@@ -13,7 +13,6 @@ import FilterBar from './FilterBar';
 /* added by Max to support formdata.entries on iceweasel */
 require('formdata-polyfill')
 
-
 export default class ComboSearch extends React.Component {
     constructor(props) {
         super(props);
@@ -107,7 +106,17 @@ export default class ComboSearch extends React.Component {
     }
 
     changeCriteria(value, text) {
-        this.setState({ criteria: value, rightSelectText: '', selectText: text, inputText: undefined, date: undefined, momentDate: undefined });
+        // Here we predefine a value for the select picker. This is a workaround to a bug of react-combo-select 
+        // which prevents using the 'select among this list' kind of messages
+        let preselectedValueOnSelectPicker = null;
+        for (let property in this.props.selectPickerData) {
+            if (property === value) {
+                preselectedValueOnSelectPicker = this.props.selectPickerData[property][0];
+                break;
+            }
+        }
+
+        this.setState({ criteria: value, rightSelectText: preselectedValueOnSelectPicker, selectText: text, inputText: undefined, date: undefined, momentDate: undefined });
         this.clearErrorMessage();
     }
 
@@ -346,10 +355,14 @@ export default class ComboSearch extends React.Component {
                         ? (
                             <div className="ComboSearch__inputWrapper">
                                 <div className="ComboStyleOverride">
+                                    {this.state.rightSelectText}
                                     <ComboSelect
                                         data={selectPickerOptions} //no update based on change of this prop. this is a bug reported https://github.com/gogoair/react-combo-select/issues/47
                                         onChange={this.changeRightSelectText}
-                                        value={this.state.rightSelectText}
+                                        //value={this.state.rightSelectText}
+                                        text={this.state.rightSelectText}
+
+                                        //value={'info'}
                                         name="search"
                                         order="off"
                                         sort="off"
