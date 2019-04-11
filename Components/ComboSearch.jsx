@@ -253,7 +253,6 @@ export default class ComboSearch extends React.Component {
         let isSecondLevelSelectNeeded = false;
         let secondLevelSelectOptions = null;
 
-        debugger
         if (this.props.secondLevelSelectData) {
             for (let property in this.props.secondLevelSelectData) {
                 if (property === this.state.criteria) {
