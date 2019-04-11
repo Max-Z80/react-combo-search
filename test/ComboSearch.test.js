@@ -226,14 +226,13 @@ describe('onSearch arguments', () => {
                 'category': ['error', 'debug', 'info', 'comment', 'command lines']
             }} />);
 
-        search.setState({ criteria: 'category' });
-        console.log(search.find('.ComboSearch__inputWrapper').find('ComboSelect'))
+        search.setState({ criteria: 'category', selectText: 'Category' });
         // I can not simulate a user seleting stuff in the ComboSelect 
         //search.find('.ComboSearch__inputWrapper').find('ComboSelect').find('ComboSelectItem').at(2).simulate('click', { target: { value: 'info' } });
         // this is a bad workaround
         search.instance().changeSecondLevelCriteria('error', 'error');
         search.simulate('submit', { preventDefault() { } });
-        expect(cb.calledWith([{ criteria: 'category', search: 'error', selectText: 'Role' }])).to.be.true;
+        expect(cb.calledWith([{ criteria: 'category', search: 'error', selectText: 'Category' }])).to.be.true;
 
         search.unmount();
     });
