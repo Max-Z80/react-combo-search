@@ -1,11 +1,14 @@
 /* --- reset --- */
-
 .ComboSearch * {
     box-sizing: border-box;
     font-size: 14px;
 }
 
-.ComboSearch *:focus, .ComboSearch a:focus, .ComboSearch input:focus, .ComboSearch button:focus, .ComboSearch select:focus {
+.ComboSearch *:focus,
+.ComboSearch a:focus,
+.ComboSearch input:focus,
+.ComboSearch button:focus,
+.ComboSearch select:focus {
     outline: none;
 }
 
@@ -36,11 +39,13 @@
     color: #e1e1e1;
 }
 
-.ComboSearch input[type="email"]:focus, .ComboSearch input[type="password"]:focus {
+.ComboSearch input[type="email"]:focus,
+.ComboSearch input[type="password"]:focus {
     outline-width: 2px;
 }
 
-.ComboSearch input[type="search"]:focus, .ComboSearch input[type="text"]:focus {
+.ComboSearch input[type="search"]:focus,
+.ComboSearch input[type="text"]:focus {
     outline: 1px solid #45B3E3;
 }
 
@@ -75,56 +80,49 @@
     opacity: 1;
 }
 
-.ComboSearch input[type=text]:-webkit-autofill, .ComboSearch input[type=text]:-webkit-autofill:hover, .ComboSearch input[type=text]:-webkit-autofill:focus, .ComboSearch input[type=text]:-webkit-autofill:active {
+.ComboSearch input[type=text]:-webkit-autofill,
+.ComboSearch input[type=text]:-webkit-autofill:hover,
+.ComboSearch input[type=text]:-webkit-autofill:focus,
+.ComboSearch input[type=text]:-webkit-autofill:active {
     -webkit-box-shadow: 0 0 0 42px white inset !important;
 }
 
 /* --- select override styles --- */
-
 .ComboStyleOverride .combo-select {
-    /* max-width: 180px; */
+    min-width: 180px;
 }
-
 .ComboStyleOverride .combo-select .combo-select-body {
     border-radius: 2px;
     font-size: 14px;
     border-color: #bcbcbc;
 }
-
 .ComboStyleOverride .combo-select .combo-select-body .combo-select-item {
     white-space: nowrap;
 }
-
 .ComboStyleOverride .combo-select .combo-select-body .combo-select-item.selected i {
     color: #595959;
 }
-
 .ComboStyleOverride .combo-select i {
     color: #595959;
 }
-
 .ComboStyleOverride .combo-select .search-input {
     border-radius: 2px;
     border: 1px solid #bcbcbc !important;
 }
-
 .ComboStyleOverride .combo-select-head {
     border: 1px solid #bcbcbc;
     border-radius: 2px;
     font-size: 14px;
     /*line-height: 2.6;*/
-    /*line-height: 42px;*/
-    line-height: 30px;
+    line-height: 42px;
     padding-left: 19px;
     color: #595959;
-    /*height: 42px;*/
-    height: 30px;
+    height: 42px;
     width: auto;
     min-width: 180px;
     cursor: pointer;
     vertical-align: top;
 }
-
 @media (max-width: 640px) {
     .ComboStyleOverride .combo-select-head {
         width: 100%;
@@ -132,7 +130,6 @@
 }
 
 /* --- datepicker style override --- */
-
 .Datepicker {
     position: relative;
 }
@@ -144,8 +141,7 @@
     height: 18px;
     position: absolute;
     right: 15px;
-    /* top: 11px; */
-    top: 6px;
+    top: 11px;
     color: #595959;
     pointer-events: none;
 }
@@ -169,19 +165,19 @@
     text-align: center;
 }
 
-.rdtPrev span, .rdtNext span, .rdtBtn {
+.rdtPrev span,
+.rdtNext span,
+.rdtBtn {
     color: #45B3E3;
 }
 
 /* --- util --- */
-
 .Input {
-    padding: 5px 15px;
-    /* padding-left: 49px; */
+    padding: 11px 15px;
+    padding-left: 49px;
     border: 1px solid #bcbcbc;
     width: 100%;
-    /*height: 42px;*/
-    height: 30px;
+    height: 42px;
     display: block;
     outline: 1px solid transparent;
     transition: all .2s ease-in-out;
@@ -210,13 +206,15 @@
 }
 
 .Button.Button--action {
-    color: #fff;
-    background-color: #45B3E3;
-    border-color: #068fc5;
-    min-width: 145px;
+     color: #fff;
+     background-color: #45B3E3;
+     border-color: #068fc5;
+     min-width: 145px;
+
 }
 
-.Button.Button--action:focus, .Button.Button--action:hover {
+.Button.Button--action:focus,
+.Button.Button--action:hover {
     background-color: #75d1f9;
 }
 
@@ -228,13 +226,12 @@
     cursor: not-allowed;
 }
 
-/* --- main --- */
 
+/* --- main --- */
 .ComboSearch {
     background-color: #fff;
-    /*border: solid 1px #bcbcbc;*/
-    border-radius: 4px;
-    /*padding: 24px 20px;*/
+    border: solid 1px #bcbcbc;
+    padding: 24px 20px;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -245,12 +242,12 @@
     position: relative;
 }
 
-.ComboSearch>p {
+.ComboSearch > p {
     flex: 0 1 100%;
     font-weight: bold;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
     .ComboSearch {
         display: block;
     }
@@ -261,7 +258,7 @@
 }
 
 .ComboStyleOverride {
-    /* flex: 1 1 28%; */
+    flex: 1 0 28%;
     margin-bottom: 16px;
 }
 
@@ -274,21 +271,17 @@
 
 .ComboSearch__inputWrapper {
     position: relative;
-    flex: 1 1 30%;
+    flex: 1 0 70%;
 }
 
 .ComboSearch__inputIcon {
     display: inline-block;
     background: url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2248%22%20height%3D%2248%22%20viewBox%3D%220%200%2048%2048%22%3E%0A%20%20%20%20%3Cpath%20fill%3D%22%23595959%22%20fill-rule%3D%22evenodd%22%20d%3D%22M29.385%2021.846c0-2.075-.738-3.85-2.213-5.326-1.475-1.475-3.25-2.212-5.326-2.212-2.075%200-3.85.737-5.326%202.212-1.475%201.476-2.212%203.25-2.212%205.326%200%202.075.737%203.85%202.212%205.326%201.476%201.475%203.25%202.213%205.326%202.213%202.075%200%203.85-.738%205.326-2.213%201.475-1.475%202.213-3.25%202.213-5.326zm8.615%2014a2.07%202.07%200%200%201-.64%201.515%202.07%202.07%200%200%201-1.514.639c-.606%200-1.11-.213-1.514-.64l-5.772-5.754c-2.008%201.39-4.246%202.086-6.714%202.086a11.64%2011.64%200%200%201-4.602-.934c-1.464-.622-2.726-1.464-3.786-2.524s-1.902-2.322-2.524-3.786A11.64%2011.64%200%200%201%2010%2021.846c0-1.604.311-3.138.934-4.602.622-1.464%201.464-2.726%202.524-3.786s2.322-1.902%203.786-2.524A11.64%2011.64%200%200%201%2021.846%2010c1.604%200%203.138.311%204.602.934%201.464.622%202.726%201.464%203.786%202.524s1.902%202.322%202.524%203.786a11.64%2011.64%200%200%201%20.934%204.602c0%202.468-.695%204.706-2.086%206.714l5.771%205.772c.415.415.623.92.623%201.514z%22/%3E%0A%3C/svg%3E%0A) no-repeat center center;
-    /* background-size: 34px; */
-    background-size: 26px;
-    /*width: 34px;*/
-    width: 20px;
-    /*height: 34px;*/
-    height: 25px;
+    background-size: 34px;
+    width: 34px;
+    height: 34px;
     position: absolute;
-    /* left: 15px; */
-    right: 15px;
+    left: 15px;
     top: 4px;
 }
 
@@ -303,7 +296,7 @@
 .ComboSearch__datePicker {
     background-color: #fff;
     display: flex;
-    flex: 1 0 20%;
+    flex: 1 0 70%;
     align-items: center;
     justify-content: space-between;
     width: 100%;
@@ -326,8 +319,7 @@
     align-items: center;
     justify-content: space-around;
     flex: 1 0 50%;
-    /* height: 42px; */
-    height: 30px;
+    height: 42px;
 }
 
 @media (max-width: 640px) {
@@ -338,8 +330,7 @@
 
 .ComboSearch__datePickerWrapper {
     flex: 1 0 50%;
-    /* height: 42px; */
-    height: 30px;
+    height: 42px;
     position: relative;
 }
 
@@ -392,10 +383,8 @@
     justify-content: center;
     align-items: center;
     max-width: 131px;
-    /*height: 42px;*/
-    height: 30px;
-    /* border-radius: 21px; */
-    border-radius: 13px;
+    height: 42px;
+    border-radius: 21px;
     color: #aeaeae;
     background-color: #fff;
     border: solid 1px #bcbcbc;
@@ -426,8 +415,7 @@
     min-width: 90px;
     min-height: 60px;
     padding: 6px 34px 6px 6px;
-    /*background-color: #3d3d3d; original value*/
-    background-color: #337AB7;
+    background-color: #3d3d3d;
     margin: 10px;
 }
 
@@ -458,3 +446,4 @@
 .FilterBar__filter.FilterBar__filter--disabled .FilterBar__filterClose {
     cursor: not-allowed;
 }
+
