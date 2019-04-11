@@ -20,7 +20,7 @@ export default class ComboSearch extends React.Component {
 
         this.state = {
             criteria: this.props.selectDefaultValue.value || this.props.selectData[0] ? this.props.selectData[0].value : '',
-            secondLevelCriteria: '',
+            rightSelectText: '',
             selectText: this.props.selectDefaultValue.text || this.props.selectData[0] ? this.props.selectData[0].text : '',
             beforeOrAfter: 'before',
             inputText: undefined,
@@ -30,7 +30,7 @@ export default class ComboSearch extends React.Component {
         };
 
         this.changeCriteria = :: this.changeCriteria;
-        this.changeSecondLevelCriteria = :: this.changeSecondLevelCriteria;
+        this.changeRightSelectText = :: this.changeRightSelectText;
         this.handleSubmit = :: this.handleSubmit;
         this.onInputChange = :: this.onInputChange;
         this.validateTextInput = :: this.validateTextInput;
@@ -107,12 +107,12 @@ export default class ComboSearch extends React.Component {
     }
 
     changeCriteria(value, text) {
-        this.setState({ criteria: value, selectText: text, inputText: undefined, date: undefined, momentDate: undefined });
+        this.setState({ criteria: value, rightSelectText: '', selectText: text, inputText: undefined, date: undefined, momentDate: undefined });
         this.clearErrorMessage();
     }
 
-    changeSecondLevelCriteria(value, text) {
-        this.setState({ secondLevelCriteria: value, inputText: undefined, date: undefined, momentDate: undefined });
+    changeRightSelectText(value, text) {
+        this.setState({ rightSelectText: value, inputText: undefined, date: undefined, momentDate: undefined });
         if (!this.props.hasButton) {
             this.handleSubmit();
         }
@@ -253,13 +253,14 @@ export default class ComboSearch extends React.Component {
         let isSecondLevelSelectNeeded = false;
         let secondLevelSelectOptions = null;
 
+        debugger
         if (this.props.secondLevelSelectData) {
             for (let property in this.props.secondLevelSelectData) {
                 if (property === this.state.criteria) {
                     if (Array.isArray(this.props.secondLevelSelectData[property]))
                         isSecondLevelSelectNeeded = true;
                     secondLevelSelectOptions = this.props.secondLevelSelectData[property];
-                    break;
+                    // break;
                 }
             }
         }
@@ -346,11 +347,10 @@ export default class ComboSearch extends React.Component {
                         ? (
                             <div className="ComboSearch__inputWrapper">
                                 <div className="ComboStyleOverride">
-
                                     <ComboSelect
-                                        data={secondLevelSelectOptions}
-                                        onChange={this.changeSecondLevelCriteria}
-                                        value={this.state.secondLevelCriteria}
+                                        data={secondLevelSelectOptions} //no update based on change of this prop. this is a bug reported https://github.com/gogoair/react-combo-select/issues/47
+                                        onChange={this.changeRightSelectText}
+                                        value={this.state.rightSelectText}
                                         name="search"
                                         order="off"
                                         sort="off"

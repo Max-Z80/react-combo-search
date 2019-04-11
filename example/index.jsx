@@ -14,9 +14,11 @@ function render(Component) {
                         { value: 'partner_code', text: 'Partner' },
                         { value: 'created_date', text: 'Created date' },
                         { value: 'category', text: 'Category' },
+                        { value: 'tag', text: 'Tag' },
                     ]}
                     secondLevelSelectData={{
-                        'category': ['error', 'debug', 'info', 'comment', 'command lines']
+                        'category': ['error', 'debug', 'info', 'comment', 'command lines'],
+                        'tag': ['tag1', 'tag2']
                     }}
                     datePickerCriteria='created_date'
                     isInFetchingState={false}

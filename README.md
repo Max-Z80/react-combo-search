@@ -1,6 +1,6 @@
 # react-combo-search
 
-React component encapsulating the logic for filtering with select dropdown and text / dates.
+React component encapsulating the logic for filtering with select dropdown and text / dates / select.
 Comes with [react-combo-select](https://www.npmjs.com/package/react-combo-select) and [react-datetime](https://www.npmjs.com/package/react-datetime) out of the box, but can take render props for select and date picker so you are not forced to use these two packages.
 
 
@@ -56,7 +56,6 @@ export default class FakeComponent extends Component {
 	}
 }
 ```
-
 ### classNames
 If you decide on using existing components, you may want to style them differently. You can also pass any prop to style these two in additionalSelectProps and additionalDatePickerProps, see next table. 
 
@@ -86,6 +85,7 @@ If you decide on using existing components, you may want to style them different
 | ------------ | ------- | ------- | ----------- |
 | **onSearch** | function | none | Callback to invoke on filter apply, gets passed form data as only argument
 | **selectData** | array of objects | none | Data for **react-combo-select** to populate select with options, with value and text props
+| **secondLevelSelectData** | object | none | One or more of the options from **selectData** prop on which we want to open a select picker. See this [section](#selectpicker) |
 | **datePickerCriteria** | string or array | none | One or more of the options from **selectData** prop on which we want to open a date picker, either a string or an array of strings (value prop)
 | **selectRenderFn** | function | none | Function that returns jsx for your custom select component. Since select is a controlled component this function will get called like **selectRenderFn(selectData, selectedText, selectedValue, changeCallback, ...yourArguments)**, where returning component sets its options to selectData, text to selectedText(optional), value to selectedValue and onChange to changeCallback. 
 | **selectRenderFnArgs** | array | none | Array of arguments that will get passed to **selectRenderFn** that you passed. Eg [1, 2, 3] will get spread as arguments
@@ -104,7 +104,27 @@ If you decide on using existing components, you may want to style them different
 | **additionalDatePickerProps** | object | none | Object to spread on **react-datetime** as props. Takes any props react-datetime takes
 
 ### Customizing and contributing
-
 You can contact us in case you need some feature or want to contribute, but keep in mind we don't want to go overboard with trying to make this component a "swiss knife".
 It's possible that you may need additional className props, we haven't fully tested custom styling. Feel free to contact us should that be a case.
 You can also freely fork and play around with the project.
+
+### Select Picker
+This fork brings the possibility to search for keywords using a select picker. This feature comes in addition to the existing search filters by text or by date. It helps the user searching for predefined terms which he otherwise may not know or misspell.
+In order to use this functionnality
+- set a props called secondLevelSelectData props
+- add your criteria to selectData as you would do for a search filter by date.
+
+An example
+```
+<ComboSearch
+  onSearch={(data) => { youCallbackFunction }}
+  selectData={[
+    ... your search criteria by text or by date ...
+    { value: 'category', text: 'Category' },
+  ]}
+  secondLevelSelectData={{
+    'category': ['error', 'debug', 'info', 'comment', 'command lines']
+  }}
+/>                  
+```
+The secondLevelSelectData object contains one or several properties which corresponds to the name of the criteria which will offer different options. The value of this property is an array containing the differnet options. 
