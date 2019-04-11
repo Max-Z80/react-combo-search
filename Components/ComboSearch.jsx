@@ -20,6 +20,7 @@ export default class ComboSearch extends React.Component {
 
         this.state = {
             criteria: this.props.selectDefaultValue.value || this.props.selectData[0] ? this.props.selectData[0].value : '',
+            secondLevelCriteria: '',
             selectText: this.props.selectDefaultValue.text || this.props.selectData[0] ? this.props.selectData[0].text : '',
             beforeOrAfter: 'before',
             inputText: undefined,
@@ -28,14 +29,15 @@ export default class ComboSearch extends React.Component {
             appliedFilters: [],
         };
 
-        this.changeCriteria = ::this.changeCriteria;
-        this.handleSubmit = ::this.handleSubmit;
-        this.onInputChange = ::this.onInputChange;
-        this.validateTextInput = ::this.validateTextInput;
-        this.clearErrorMessage = ::this.clearErrorMessage;
-        this.onDateChange = ::this.onDateChange;
-        this.submitOnDateChange = ::this.submitOnDateChange;
-        this.getFilters = ::this.getFilters;
+        this.changeCriteria = :: this.changeCriteria;
+        this.changeSecondLevelCriteria = :: this.changeSecondLevelCriteria;
+        this.handleSubmit = :: this.handleSubmit;
+        this.onInputChange = :: this.onInputChange;
+        this.validateTextInput = :: this.validateTextInput;
+        this.clearErrorMessage = :: this.clearErrorMessage;
+        this.onDateChange = :: this.onDateChange;
+        this.submitOnDateChange = :: this.submitOnDateChange;
+        this.getFilters = :: this.getFilters;
     }
 
     static defaultProps = {
@@ -69,6 +71,7 @@ export default class ComboSearch extends React.Component {
     static propTypes = {
         onSearch: PropTypes.func.isRequired,
         selectData: PropTypes.array,
+        secondLevelSelectData: PropTypes.object,
         selectRenderFn: PropTypes.func,
         selectRenderFnArgs: PropTypes.array,
         datePickerRenderFn: PropTypes.func,
@@ -104,15 +107,26 @@ export default class ComboSearch extends React.Component {
     }
 
     changeCriteria(value, text) {
-        this.setState({criteria: value, selectText: text, inputText: undefined, date: undefined, momentDate: undefined});
+        this.setState({ criteria: value, selectText: text, inputText: undefined, date: undefined, momentDate: undefined });
         this.clearErrorMessage();
     }
 
+    changeSecondLevelCriteria(value, text) {
+        this.setState({ secondLevelCriteria: value, inputText: undefined, date: undefined, momentDate: undefined });
+        if (!this.props.hasButton) {
+            this.handleSubmit();
+        }
+        this.clearErrorMessage();
+    }
+
+    /**
+     * Methods called upon emission of an event from any of the different html element composing the form
+     * @param {*} event event causing this call.
+     */
     handleSubmit(event) {
         if (event) {
             event.preventDefault();
         }
-
         if (this.isFormValid() && !this.props.isInFetchingState) {
             const formData = new FormData(this.form);
             let data = {};
@@ -122,6 +136,7 @@ export default class ComboSearch extends React.Component {
 
             data.selectText = this.state.selectText;
             data.criteria = this.state.criteria;
+
 
             const filterAlreadyExists = this.state.appliedFilters.some(filter => {
                 return isEqual(omit(filter, ['momentDate']), omit(data, ['momentDate']));
@@ -137,7 +152,7 @@ export default class ComboSearch extends React.Component {
                 });
             } else {
                 if (this.props.simpleVersion) {
-                    this.setState({inputText: ''});
+                    this.setState({ inputText: '' });
                     this.props.onSearch(data);
                 } else {
                     const filters = this.getFilters(data);
@@ -173,7 +188,7 @@ export default class ComboSearch extends React.Component {
         });
 
         this.props.onSearch(newFilters);
-        this.setState({appliedFilters: newFilters});
+        this.setState({ appliedFilters: newFilters });
     };
 
     validateTextInput(value) {
@@ -213,6 +228,10 @@ export default class ComboSearch extends React.Component {
         });
     };
 
+    /**
+     * Add a new filter to a filter list. When the filter already exists, it is not duplicated (the version in newFilter is used)
+     * @param {*} newFilter new filter
+     */
     getFilters(newFilter) {
         let newFilters = this.state.appliedFilters.filter((filter) => {
             return !((filter.search === 'before' || filter.search === 'after') && newFilter.search === filter.search);
@@ -228,6 +247,22 @@ export default class ComboSearch extends React.Component {
         const isDatePickerOpen = Array.isArray(this.props.datePickerCriteria)
             ? this.props.datePickerCriteria.includes(this.state.criteria)
             : this.props.datePickerCriteria === this.state.criteria;
+
+
+        // check whether second level select is needed
+        let isSecondLevelSelectNeeded = false;
+        let secondLevelSelectOptions = null;
+
+        if (this.props.secondLevelSelectData) {
+            for (let property in this.props.secondLevelSelectData) {
+                if (property === this.state.criteria) {
+                    if (Array.isArray(this.props.secondLevelSelectData[property]))
+                        isSecondLevelSelectNeeded = true;
+                    secondLevelSelectOptions = this.props.secondLevelSelectData[property];
+                    break;
+                }
+            }
+        }
 
         return (
             <form onSubmit={this.handleSubmit} ref={el => (this.form = el)} data-automation="regionComboSearchForm">
@@ -254,8 +289,8 @@ export default class ComboSearch extends React.Component {
                         {this.state.selectError ? (
                             <span className="ComboSearch__formError">{this.state.selectError}</span>
                         ) : (
-                            false
-                        )}
+                                false
+                            )}
                     </div>
                     {isDatePickerOpen ? (
                         <div className={this.props.classNames.datePickerRadioWrapper}>
@@ -303,13 +338,29 @@ export default class ComboSearch extends React.Component {
                                 {this.state.datePickerError ? (
                                     <span className="ComboSearch__formError">{this.state.datePickerError}</span>
                                 ) : (
-                                    false
-                                )}
+                                        false
+                                    )}
                             </div>
                         </div>
-                    ) : (
-                        <div className="ComboSearch__inputWrapper">
-                            <span className="ComboSearch__inputIcon"/>
+                    ) : (isSecondLevelSelectNeeded
+                        ? (
+                            <div className="ComboSearch__inputWrapper">
+                                <div className="ComboStyleOverride">
+
+                                    <ComboSelect
+                                        data={secondLevelSelectOptions}
+                                        onChange={this.changeSecondLevelCriteria}
+                                        value={this.state.secondLevelCriteria}
+                                        name="search"
+                                        order="off"
+                                        sort="off"
+                                        disabled={this.props.secondLevelSelectData.length === 0}
+                                        {...this.props.additionalSelectProps}
+                                    />
+                                </div>
+                            </div>)
+                        : (<div className="ComboSearch__inputWrapper">
+                            <span className="ComboSearch__inputIcon" />
                             <input
                                 type="text"
                                 name="search"
@@ -325,10 +376,10 @@ export default class ComboSearch extends React.Component {
                             {this.state.inputTextError ? (
                                 <span className="ComboSearch__formError">{this.state.inputTextError}</span>
                             ) : (
-                                false
-                            )}
-                        </div>
-                    )}
+                                    false
+                                )}
+                        </div>)
+                        )}
 
                     {this.props.hasButton ? (
                         <SmartButton
@@ -341,8 +392,8 @@ export default class ComboSearch extends React.Component {
                             dataAutomation="buttonComboSearchApply"
                         />
                     ) : (
-                        false
-                    )}
+                            false
+                        )}
                     {!this.props.simpleVersion ? (
                         <FilterBar
                             filters={this.state.appliedFilters}
@@ -351,8 +402,8 @@ export default class ComboSearch extends React.Component {
                             classNames={this.props.filterBarClassNames}
                         />
                     ) : (
-                        false
-                    )}
+                            false
+                        )}
                 </div>
             </form>
         );
