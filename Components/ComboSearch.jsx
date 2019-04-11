@@ -107,16 +107,35 @@ export default class ComboSearch extends React.Component {
     }
 
     changeCriteria(value, text) {
+        /// test
+        debugger;
+        const formData = new FormData(this.form);
+        let data = {};
+        for (let pair of formData.entries()) {
+            data[pair[0]] = pair[1];
+        }
+        console.log(JSON.stringify(data));
+        //// end test
         this.setState({ criteria: value, rightSelectText: '', selectText: text, inputText: undefined, date: undefined, momentDate: undefined });
         this.clearErrorMessage();
+
     }
 
     changeRightSelectText(value, text) {
-        this.setState({ rightSelectText: value, inputText: undefined, date: undefined, momentDate: undefined });
-        if (!this.props.hasButton) {
-            this.handleSubmit();
+        debugger;
+        // test
+        const formData = new FormData(this.form);
+        let data = {};
+        for (let pair of formData.entries()) {
+            data[pair[0]] = pair[1];
         }
-        this.clearErrorMessage();
+        console.log(JSON.stringify(data));
+        this.setState({ rightSelectText: value, inputText: undefined, date: undefined, momentDate: undefined });
+
+        // if (!this.props.hasButton) {
+        //     this.handleSubmit();
+        // }
+        // this.clearErrorMessage();
     }
 
     /**
@@ -124,6 +143,7 @@ export default class ComboSearch extends React.Component {
      * @param {*} event event causing this call.
      */
     handleSubmit(event) {
+        debugger
         if (event) {
             event.preventDefault();
         }
@@ -349,7 +369,7 @@ export default class ComboSearch extends React.Component {
                                     <ComboSelect
                                         data={selectPickerOptions} //no update based on change of this prop. this is a bug reported https://github.com/gogoair/react-combo-select/issues/47
                                         onChange={this.changeRightSelectText}
-                                        value={this.state.rightSelectText}
+                                        //value={this.state.rightSelectText}
                                         name="search"
                                         order="off"
                                         sort="off"
