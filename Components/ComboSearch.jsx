@@ -118,10 +118,12 @@ export default class ComboSearch extends React.Component {
 
         this.setState({ criteria: value, rightSelectText: preselectedValueOnSelectPicker, selectText: text, inputText: undefined, date: undefined, momentDate: undefined });
         this.clearErrorMessage();
+
     }
 
     changeRightSelectText(value, text) {
         this.setState({ rightSelectText: value, inputText: undefined, date: undefined, momentDate: undefined });
+
         if (!this.props.hasButton) {
             this.handleSubmit();
         }
@@ -355,14 +357,10 @@ export default class ComboSearch extends React.Component {
                         ? (
                             <div className="ComboSearch__inputWrapper">
                                 <div className="ComboStyleOverride">
-                                    {this.state.rightSelectText}
                                     <ComboSelect
                                         data={selectPickerOptions} //no update based on change of this prop. this is a bug reported https://github.com/gogoair/react-combo-select/issues/47
                                         onChange={this.changeRightSelectText}
-                                        //value={this.state.rightSelectText}
                                         text={this.state.rightSelectText}
-
-                                        //value={'info'}
                                         name="search"
                                         order="off"
                                         sort="off"
