@@ -18,7 +18,7 @@ function render(Component) {
                     ]}
                     selectPickerData={{
                         'category': ['info', 'error', 'debug', 'comment', 'command lines'],
-                        'tag': ['tag1', 'tag2']
+                        'tag': ['tag1', { value: '5cb5f01e78ac235dec26732b', text: 'tag2' }]
                     }}
                     datePickerCriteria='created_date'
                     isInFetchingState={false}
