@@ -13,6 +13,7 @@ const selectData = [
     { value: 'team_name', text: 'Team' },
     { value: 'created_date', text: 'Date' },
     { value: 'category', text: 'Category' },
+    { value: 'tag', text: 'Tag' }
 ];
 
 ComboSearch.prototype.componentDidMount = () => { };
@@ -254,7 +255,7 @@ describe('onSearch arguments', () => {
         search.unmount();
     });
 
-    it('calls onSearch with proper args when filtering by select', () => {
+    it('calls onSearch with proper args when filtering by select - Case 1', () => {
         const cb = sinon.spy();
         const search = mount(<ComboSearch
             onSearch={cb}
@@ -269,7 +270,29 @@ describe('onSearch arguments', () => {
         // this is a bad workaround
         search.instance().changeRightSelectText('error', 'error');
         search.simulate('submit', { preventDefault() { } });
-        expect(cb.calledWith([{ criteria: 'category', search: 'error', selectText: 'Category' }])).to.be.true;
+        expect(cb.calledWith([{ criteria: 'category', search: 'error', selectText: 'Category', selectPickerText: 'error' }])).to.be.true;
+
+        search.unmount();
+    });
+
+    it('calls onSearch with proper args when filtering by select - Case 2', () => {
+        const cb = sinon.spy();
+        const search = mount(<ComboSearch
+            onSearch={cb}
+            selectData={selectData}
+            selectPickerData={{
+                'tag': [{ value: '5cb5f01e78ac235dec26732a', text: 'tag1' }, { value: '5cb5f01e78ac235dec26732b', text: 'tag2' }]
+            }} />);
+
+        search.instance().changeCriteria('tag', 'Tag');
+        search.update();
+
+        // I can not simulate a user seleting stuff in the ComboSelect 
+        //search.find('.ComboSearch__inputWrapper').find('ComboSelect').find('ComboSelectItem').at(2).simulate('click', { target: { value: 'info' } });
+        // this is a bad workaround
+        search.instance().changeRightSelectText('5cb5f01e78ac235dec26732a', 'tag1');
+        search.simulate('submit', { preventDefault() { } });
+        expect(cb.calledWith([{ criteria: 'tag', search: '5cb5f01e78ac235dec26732a', selectText: 'Tag', selectPickerText: 'tag1' }])).to.be.true;
 
         search.unmount();
     });
