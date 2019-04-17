@@ -270,7 +270,7 @@ describe('onSearch arguments', () => {
         // this is a bad workaround
         search.instance().changeRightSelectText('error', 'error');
         search.simulate('submit', { preventDefault() { } });
-        expect(cb.calledWith([{ criteria: 'category', search: 'error', selectText: 'Category' }])).to.be.true;
+        expect(cb.calledWith([{ criteria: 'category', search: 'error', selectText: 'Category', selectPickerText: 'error' }])).to.be.true;
 
         search.unmount();
     });
@@ -292,8 +292,7 @@ describe('onSearch arguments', () => {
         // this is a bad workaround
         search.instance().changeRightSelectText('5cb5f01e78ac235dec26732a', 'tag1');
         search.simulate('submit', { preventDefault() { } });
-        console.log(JSON.stringify(cb.args));
-        //expect(cb.calledWith([{ criteria: 'tag', search: '5cb5f01e78ac235dec26732a', selectText: 'tag1' }])).to.be.true;
+        expect(cb.calledWith([{ criteria: 'tag', search: '5cb5f01e78ac235dec26732a', selectText: 'Tag', selectPickerText: 'tag1' }])).to.be.true;
 
         search.unmount();
     });

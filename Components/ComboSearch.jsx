@@ -20,7 +20,6 @@ export default class ComboSearch extends React.Component {
         this.state = {
             criteria: this.props.selectDefaultValue.value || this.props.selectData[0] ? this.props.selectData[0].value : '',
             selectPickerText: '',
-            selectPickerValue: '',
             selectText: this.props.selectDefaultValue.text || this.props.selectData[0] ? this.props.selectData[0].text : '',
             beforeOrAfter: 'before',
             inputText: undefined,
@@ -110,18 +109,15 @@ export default class ComboSearch extends React.Component {
         // Here we predefine a value for the select picker. This is a workaround to a bug of react-combo-select 
         // which prevents using the 'select among this list' kind of messages
         let preselectedTextOnSelectPicker = '';
-        let preselectedValueOnSelectPicker = '';
         for (let selectPickDataProperty in this.props.selectPickerData) {
             if (selectPickDataProperty === value) {
                 if (this.props.selectPickerData[selectPickDataProperty] instanceof Array && this.props.selectPickerData[selectPickDataProperty].length != 0) {
                     if (typeof this.props.selectPickerData[selectPickDataProperty][0] === 'string') {
                         preselectedTextOnSelectPicker = this.props.selectPickerData[selectPickDataProperty][0];
-                        preselectedValueOnSelectPicker = preselectedTextOnSelectPicker;
                     }
                     else {
                         if (this.props.selectPickerData[selectPickDataProperty][0].text) {
                             preselectedTextOnSelectPicker = this.props.selectPickerData[selectPickDataProperty][0].text;
-                            preselectedValueOnSelectPicker = this.props.selectPickerData[selectPickDataProperty][0].value;
                         }
                     }
                 }
@@ -132,7 +128,6 @@ export default class ComboSearch extends React.Component {
         this.setState({
             criteria: value,
             selectPickerText: preselectedTextOnSelectPicker,
-            selectPickerValue: preselectedValueOnSelectPicker,
             selectText: text,
             inputText: undefined,
             date: undefined,
@@ -142,15 +137,15 @@ export default class ComboSearch extends React.Component {
     }
 
     changeRightSelectText(value, text) {
-        console.log('in changeRightSelectText, value vaut ' + value);
-        console.log('changeRightSelectText, text vaut ' + text);
+        // This is a trick to pass text and values in the form when a selectPicker is used. This enables to use 
+        // these values in handleSubmit() as we can not use the component states to pass these values because 
+        // setstate may finish at any time. We do that because react-combo-select only pass the selectPickerText 
+        // in its value and the selectPickerValue is not available using formData.
+        this.form.selectPickerText = text;
+        this.form.selectPickerValue = value;
+
         this.setState({
-            selectText: text,
-            selectPickerValue: value,
-            selectPickerText: text,
-            inputText: undefined,
-            date: undefined,
-            momentDate: undefined
+            selectPickerText: text //updates text shown in selectPicker after selection
         });
 
         if (!this.props.hasButton) {
@@ -164,30 +159,28 @@ export default class ComboSearch extends React.Component {
      * @param {*} event event causing this call.
      */
     handleSubmit(event) {
-        debugger;
         if (event) {
             event.preventDefault();
         }
         if (this.isFormValid() && !this.props.isInFetchingState) {
-
             let data = {};
+            if (this.form.selectPickerValue) {
+                // the form contains a selectPicker filter
+                data.search = this.form.selectPickerValue;
+                data.selectPickerText = this.form.selectPickerText;
 
-            if (this.state.selectPickerValue === '') {
+                // reset these values in case further filters are used
+                this.form.selectPickerText = null;
+                this.form.selectPickerValue = null;
+            } else {
                 const formData = new FormData(this.form);
                 for (let pair of formData.entries()) {
-                    console.log(pair[0] + ' = ' + pair[1]);
                     data[pair[0]] = pair[1];
                 }
-                data.selectText = this.state.selectText;
-
-            } else {
-                data.search = this.state.selectPickerValue;
-                data.selectText = this.state.selectPickerText;
             }
-            
-            data.criteria = this.state.criteria;
 
-            console.log(JSON.stringify(data))
+            data.criteria = this.state.criteria;
+            data.selectText = this.state.selectText;
 
             const filterAlreadyExists = this.state.appliedFilters.some(filter => {
                 return isEqual(omit(filter, ['momentDate']), omit(data, ['momentDate']));
@@ -207,10 +200,7 @@ export default class ComboSearch extends React.Component {
                     this.props.onSearch(data);
                 } else {
                     const filters = this.getFilters(data);
-
-                    console.log('filters vaut ' + JSON.stringify(filters));
                     this.props.onSearch(filters);
-
                     this.setState({
                         appliedFilters: filters,
                         inputText: ''
@@ -300,7 +290,6 @@ export default class ComboSearch extends React.Component {
         const isDatePickerOpen = Array.isArray(this.props.datePickerCriteria)
             ? this.props.datePickerCriteria.includes(this.state.criteria)
             : this.props.datePickerCriteria === this.state.criteria;
-
 
         // check whether a select pciker is needed
         let isSelectPickerNeeded = false;
