@@ -109,9 +109,18 @@ export default class ComboSearch extends React.Component {
         // Here we predefine a value for the select picker. This is a workaround to a bug of react-combo-select 
         // which prevents using the 'select among this list' kind of messages
         let preselectedValueOnSelectPicker = null;
-        for (let property in this.props.selectPickerData) {
-            if (property === value) {
-                preselectedValueOnSelectPicker = this.props.selectPickerData[property][0];
+        for (let selectPickDataProperty in this.props.selectPickerData) {
+            if (selectPickDataProperty === value) {
+                if (this.props.selectPickerData[selectPickDataProperty] instanceof Array && this.props.selectPickerData[selectPickDataProperty].length !=0 ) {
+                    if (typeof this.props.selectPickerData[selectPickDataProperty][0] === 'string'){
+                        preselectedValueOnSelectPicker = this.props.selectPickerData[selectPickDataProperty][0];
+                    }
+                    else {
+                        if (this.props.selectPickerData[selectPickDataProperty][0].text) {
+                            preselectedValueOnSelectPicker = this.props.selectPickerData[selectPickDataProperty][0].text;
+                        }
+                    }
+                }
                 break;
             }
         }
@@ -122,7 +131,7 @@ export default class ComboSearch extends React.Component {
     }
 
     changeRightSelectText(value, text) {
-        this.setState({ rightSelectText: value, inputText: undefined, date: undefined, momentDate: undefined });
+        this.setState({ rightSelectText: text, inputText: undefined, date: undefined, momentDate: undefined });
 
         if (!this.props.hasButton) {
             this.handleSubmit();

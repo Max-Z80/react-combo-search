@@ -90,7 +90,7 @@ describe('Select filtering', () => {
         search.unmount();
     });
 
-    it('switches to second level select when option is selected', () => {
+    it('switches to selectPicker when option is selected', () => {
         const cb = sinon.spy();
         const search = mount(<ComboSearch
             onSearch={cb}
@@ -106,6 +106,43 @@ describe('Select filtering', () => {
 
         search.unmount();
     });
+
+    it('shows the first option of the selectPicker', () => {
+        const search = mount(<ComboSearch
+            onSearch={() => null}
+            selectData={selectData}
+            selectPickerData={{
+                'category': ['error', 'debug', 'info', 'comment', 'command lines']
+            }}
+        />);
+
+        //search.setState({ criteria: 'category' });
+        search.instance().changeCriteria('category', 'Category');
+        search.update();
+
+        expect(search.find('.ComboSearch__inputWrapper').find('ComboSelect').find('.combo-select-head').first().text()).to.equal('error');
+
+        search.unmount();
+    });
+
+    it('shows the first option of the selectPicker - case 2', () => {
+        const search = mount(<ComboSearch
+            onSearch={() => null}
+            selectData={selectData}
+            selectPickerData={{
+                'tag': [{ value: '5cb5f01e78ac235dec26732a', text: 'tag1' }, { value: '5cb5f01e78ac235dec26732b', text: 'tag2' }]
+            }}
+        />);
+
+        //search.setState({ criteria: 'category' });
+        search.instance().changeCriteria('tag', 'Tag');
+        search.update();
+
+        expect(search.find('.ComboSearch__inputWrapper').find('ComboSelect').find('.combo-select-head').first().text()).to.equal('tag1');
+
+        search.unmount();
+    });
+
 });
 
 describe('Form submit', () => {
