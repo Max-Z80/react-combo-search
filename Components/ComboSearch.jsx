@@ -106,7 +106,6 @@ export default class ComboSearch extends React.Component {
     }
 
     changeCriteria(value, text) {
-        debugger;
         // Here we predefine a value for the select picker. This is a workaround to a bug of react-combo-select 
         // which prevents using the 'select among this list' kind of messages
         let preselectedValueOnSelectPicker = null;
