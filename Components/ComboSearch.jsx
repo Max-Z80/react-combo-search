@@ -19,7 +19,8 @@ export default class ComboSearch extends React.Component {
 
         this.state = {
             criteria: this.props.selectDefaultValue.value || this.props.selectData[0] ? this.props.selectData[0].value : '',
-            rightSelectText: '',
+            selectPickerText: '',
+            selectPickerValue: '',
             selectText: this.props.selectDefaultValue.text || this.props.selectData[0] ? this.props.selectData[0].text : '',
             beforeOrAfter: 'before',
             inputText: undefined,
@@ -108,16 +109,19 @@ export default class ComboSearch extends React.Component {
     changeCriteria(value, text) {
         // Here we predefine a value for the select picker. This is a workaround to a bug of react-combo-select 
         // which prevents using the 'select among this list' kind of messages
-        let preselectedValueOnSelectPicker = null;
+        let preselectedTextOnSelectPicker = '';
+        let preselectedValueOnSelectPicker = '';
         for (let selectPickDataProperty in this.props.selectPickerData) {
             if (selectPickDataProperty === value) {
-                if (this.props.selectPickerData[selectPickDataProperty] instanceof Array && this.props.selectPickerData[selectPickDataProperty].length !=0 ) {
-                    if (typeof this.props.selectPickerData[selectPickDataProperty][0] === 'string'){
-                        preselectedValueOnSelectPicker = this.props.selectPickerData[selectPickDataProperty][0];
+                if (this.props.selectPickerData[selectPickDataProperty] instanceof Array && this.props.selectPickerData[selectPickDataProperty].length != 0) {
+                    if (typeof this.props.selectPickerData[selectPickDataProperty][0] === 'string') {
+                        preselectedTextOnSelectPicker = this.props.selectPickerData[selectPickDataProperty][0];
+                        preselectedValueOnSelectPicker = preselectedTextOnSelectPicker;
                     }
                     else {
                         if (this.props.selectPickerData[selectPickDataProperty][0].text) {
-                            preselectedValueOnSelectPicker = this.props.selectPickerData[selectPickDataProperty][0].text;
+                            preselectedTextOnSelectPicker = this.props.selectPickerData[selectPickDataProperty][0].text;
+                            preselectedValueOnSelectPicker = this.props.selectPickerData[selectPickDataProperty][0].value;
                         }
                     }
                 }
@@ -125,13 +129,29 @@ export default class ComboSearch extends React.Component {
             }
         }
 
-        this.setState({ criteria: value, rightSelectText: preselectedValueOnSelectPicker, selectText: text, inputText: undefined, date: undefined, momentDate: undefined });
+        this.setState({
+            criteria: value,
+            selectPickerText: preselectedTextOnSelectPicker,
+            selectPickerValue: preselectedValueOnSelectPicker,
+            selectText: text,
+            inputText: undefined,
+            date: undefined,
+            momentDate: undefined
+        });
         this.clearErrorMessage();
-
     }
 
     changeRightSelectText(value, text) {
-        this.setState({ rightSelectText: text, inputText: undefined, date: undefined, momentDate: undefined });
+        console.log('in changeRightSelectText, value vaut ' + value);
+        console.log('changeRightSelectText, text vaut ' + text);
+        this.setState({
+            selectText: text,
+            selectPickerValue: value,
+            selectPickerText: text,
+            inputText: undefined,
+            date: undefined,
+            momentDate: undefined
+        });
 
         if (!this.props.hasButton) {
             this.handleSubmit();
@@ -144,19 +164,30 @@ export default class ComboSearch extends React.Component {
      * @param {*} event event causing this call.
      */
     handleSubmit(event) {
+        debugger;
         if (event) {
             event.preventDefault();
         }
         if (this.isFormValid() && !this.props.isInFetchingState) {
-            const formData = new FormData(this.form);
-            let data = {};
-            for (let pair of formData.entries()) {
-                data[pair[0]] = pair[1];
-            }
 
-            data.selectText = this.state.selectText;
+            let data = {};
+
+            if (this.state.selectPickerValue === '') {
+                const formData = new FormData(this.form);
+                for (let pair of formData.entries()) {
+                    console.log(pair[0] + ' = ' + pair[1]);
+                    data[pair[0]] = pair[1];
+                }
+                data.selectText = this.state.selectText;
+
+            } else {
+                data.search = this.state.selectPickerValue;
+                data.selectText = this.state.selectPickerText;
+            }
+            
             data.criteria = this.state.criteria;
 
+            console.log(JSON.stringify(data))
 
             const filterAlreadyExists = this.state.appliedFilters.some(filter => {
                 return isEqual(omit(filter, ['momentDate']), omit(data, ['momentDate']));
@@ -176,6 +207,8 @@ export default class ComboSearch extends React.Component {
                     this.props.onSearch(data);
                 } else {
                     const filters = this.getFilters(data);
+
+                    console.log('filters vaut ' + JSON.stringify(filters));
                     this.props.onSearch(filters);
 
                     this.setState({
@@ -369,7 +402,7 @@ export default class ComboSearch extends React.Component {
                                     <ComboSelect
                                         data={selectPickerOptions} //no update based on change of this prop. this is a bug reported https://github.com/gogoair/react-combo-select/issues/47
                                         onChange={this.changeRightSelectText}
-                                        text={this.state.rightSelectText}
+                                        text={this.state.selectPickerText}
                                         name="search"
                                         order="off"
                                         sort="off"
